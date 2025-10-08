@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini Arena: Dynamic LLM & SOV Insights</title>
+    <title>Gemini Arena: LLM Comparison</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,240 +12,243 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #111827;
+            color: #F9FAFB;
         }
-        .prose-custom {
-            color: #d1d5db;
-        }
-        .prose-custom h1, .prose-custom h2, .prose-custom h3, .prose-custom strong {
-            color: #f9fafb;
-        }
-        .prose-custom ul > li::before {
-            background-color: #6b7280;
-        }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .response-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.2), rgba(255,255,255,0));
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200 antialiased">
-
+<body class="antialiased">
     <div class="container mx-auto px-4 py-8 md:py-12">
-
-        <!-- Header -->
-        <header class="text-center mb-10">
-            <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">
-                Gemini Arena
-            </h1>
-            <p class="mt-4 text-lg text-gray-400 max-w-3xl mx-auto">
-                Ask any product or brand question to compare LLM responses and see a dynamic Share of Voice (SOV) of the key players in the public conversation.
-            </p>
-             <p class="mt-2 text-sm text-yellow-500 max-w-2xl mx-auto">
-                Note: LLM responses are simulated. SOV data is pre-configured for "running shoes," "smartphones," and "gaming consoles" to demonstrate the dynamic concept.
-            </p>
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-white mb-2">Gemini Arena</h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">Ask any product or brand question to compare LLM responses and see a dynamic Share of Voice (SOV) of the key players in the public conversation.</p>
         </header>
 
-        <!-- Input Section -->
-        <div class="max-w-3xl mx-auto bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-700">
-            <div class="flex flex-col">
-                <textarea id="prompt-input" rows="4" class="w-full bg-gray-700 text-gray-200 rounded-lg p-4 placeholder-gray-500 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow" placeholder="e.g., What are the best running shoes?, Which smartphone should I buy?, What is the best gaming console?"></textarea>
-                <button id="submit-btn" class="mt-4 w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-blue-500 transition-all transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:scale-100">
-                    Generate Insights
+        <main>
+            <div class="max-w-2xl mx-auto mb-8">
+                <div class="relative">
+                    <textarea id="prompt-input" rows="3" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-4 pr-12 text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none" placeholder="e.g., What are the best running shoes right now?"></textarea>
+                </div>
+                <button id="generate-btn" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center">
+                    <svg id="button-icon" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    <span id="button-text">Generate Insights</span>
                 </button>
             </div>
-        </div>
 
-        <!-- Share of Voice Section -->
-        <div id="sov-section" class="max-w-3xl mx-auto mt-12 bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-700" style="display: none;">
-            <div class="flex items-center mb-4">
-                <svg class="w-6 h-6 mr-3 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
-                <h2 id="sov-title" class="text-2xl font-bold text-white">Share of Voice</h2>
-            </div>
-            <div class="relative h-72 md:h-80">
-                <canvas id="sov-chart"></canvas>
-            </div>
-        </div>
+            <div id="results-container" class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <!-- LLM Responses will be injected here -->
+                <div id="llm-responses-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:col-span-2">
+                    <!-- Gemini Column -->
+                    <div id="gemini-card" class="bg-gray-800/50 border border-gray-700 rounded-lg p-6 relative response-card hidden">
+                        <div class="flex items-center mb-4">
+                             <svg class="w-6 h-6 mr-3 text-blue-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16zm-2.5-3.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm5 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+                            <h3 class="text-xl font-semibold text-white">Gemini</h3>
+                        </div>
+                        <div id="gemini-response" class="text-gray-300 prose prose-invert max-w-none"><p>This is a simulated Gemini response. Enter a prompt to get a live answer.</p></div>
+                    </div>
 
+                    <!-- ChatGPT Column -->
+                    <div id="chatgpt-card" class="bg-gray-800/50 border border-gray-700 rounded-lg p-6 relative response-card hidden">
+                        <div class="flex items-center mb-4">
+                            <svg class="w-6 h-6 mr-3 text-green-400" viewBox="0 0 24 24" fill="currentColor"><path d="M20.29 3.71a9.99 9.99 0 00-14.14 0 9.99 9.99 0 000 14.14 9.99 9.99 0 0014.14 0 9.99 9.99 0 000-14.14zM12 20a8 8 0 110-16 8 8 0 010 16z"/><path d="M12 6a1 1 0 00-1 1v5a1 1 0 002 0V7a1 1 0 00-1-1zm0 8a1 1 0 100 2 1 1 0 000-2z"/></svg>
+                            <h3 class="text-xl font-semibold text-white">ChatGPT</h3>
+                        </div>
+                        <div id="chatgpt-response" class="text-gray-300 prose prose-invert max-w-none"><p>This is a simulated ChatGPT response. Enter a prompt to get a live answer.</p></div>
+                    </div>
+                </div>
 
-        <!-- Responses Section -->
-        <div id="responses-grid" class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            <!-- Gemini Response -->
-            <div id="gemini-card" class="bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-700 flex flex-col">
-                <div class="flex items-center mb-4">
-                     <svg class="w-6 h-6 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-12v4m-2-2h4m5 12v4m-2-2h4M17 3l4 4M3 17l4 4M17 21l4-4M3 7l4-4"></path></svg>
-                    <h2 class="text-xl font-bold text-white">Gemini</h2>
-                </div>
-                <div id="gemini-response" class="prose prose-custom max-w-none flex-grow whitespace-pre-wrap">
-                    <p class="text-gray-500">Ask a question to see my response.</p>
-                </div>
-            </div>
-
-            <!-- ChatGPT Response -->
-            <div id="chatgpt-card" class="bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-700 flex flex-col">
-                <div class="flex items-center mb-4">
-                    <svg class="w-6 h-6 mr-2 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                    <h2 class="text-xl font-bold text-white">ChatGPT</h2>
-                </div>
-                <div id="chatgpt-response" class="prose prose-custom max-w-none flex-grow whitespace-pre-wrap">
-                     <p class="text-gray-500">Ready for your prompt!</p>
-                </div>
-            </div>
-
-            <!-- Llama Response -->
-            <div id="llama-card" class="bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-700 flex flex-col">
-                 <div class="flex items-center mb-4">
-                     <svg class="w-6 h-6 mr-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h10a2 2 0 002-2v-1a2 2 0 012-2h1.945M7.737 10.512A4.5 4.5 0 0112 8.5c2.485 0 4.5 2.015 4.5 4.5v.5a4.5 4.5 0 01-4.5 4.5c-2.485 0-4.5-2.015-4.5-4.5v-2.488zM15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    <h2 class="text-xl font-bold text-white">Llama</h2>
-                </div>
-                <div id="llama-response" class="prose prose-custom max-w-none flex-grow whitespace-pre-wrap">
-                    <p class="text-gray-500">Awaiting your prompt.</p>
+                <!-- Insights Section -->
+                <div id="insights-section" class="lg:col-span-2 grid grid-cols-1 md:grid-cols-5 gap-8 hidden">
+                    <div id="sov-card" class="md:col-span-2 bg-gray-800/50 border border-gray-700 rounded-lg p-6 relative response-card">
+                         <div class="flex items-center mb-4">
+                            <svg class="w-6 h-6 mr-3 text-purple-400" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                            <h3 class="text-xl font-semibold text-white">Share of Voice</h3>
+                        </div>
+                        <canvas id="sov-chart"></canvas>
+                    </div>
+                     <div id="summary-card" class="md:col-span-3 bg-gray-800/50 border border-gray-700 rounded-lg p-6 relative response-card">
+                         <div class="flex items-center mb-4">
+                           <svg class="w-6 h-6 mr-3 text-yellow-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            <h3 class="text-xl font-semibold text-white">Insights Summary</h3>
+                        </div>
+                        <div id="summary-response" class="text-gray-300 prose prose-invert max-w-none"><p>An AI-generated summary of the key takeaways from the LLM responses will appear here.</p></div>
+                    </div>
                 </div>
             </div>
-
-        </div>
+        </main>
     </div>
 
-    <script>
-        const promptInput = document.getElementById('prompt-input');
-        const submitBtn = document.getElementById('submit-btn');
-        
-        const geminiResponseEl = document.getElementById('gemini-response');
-        const chatgptResponseEl = document.getElementById('chatgpt-response');
-        const llamaResponseEl = document.getElementById('llama-response');
+<script>
+    const promptInput = document.getElementById('prompt-input');
+    const generateBtn = document.getElementById('generate-btn');
+    const buttonText = document.getElementById('button-text');
+    const buttonIcon = document.getElementById('button-icon');
+    
+    const resultsContainer = document.getElementById('results-container');
+    const insightsSection = document.getElementById('insights-section');
 
-        const sovSection = document.getElementById('sov-section');
-        const sovTitle = document.getElementById('sov-title');
-        const sovCanvas = document.getElementById('sov-chart');
-        let sovChart = null;
+    const geminiCard = document.getElementById('gemini-card');
+    const geminiResponseEl = document.getElementById('gemini-response');
+    
+    const chatgptCard = document.getElementById('chatgpt-card');
+    const chatgptResponseEl = document.getElementById('chatgpt-response');
 
-        const getLoader = () => {
-            const loaderDiv = document.createElement('div');
-            loaderDiv.className = 'loader';
-            return loaderDiv;
-        };
-        
-        const getSOVData = (prompt) => {
-            const lowerCasePrompt = prompt.toLowerCase();
-            if (lowerCasePrompt.includes('running shoes')) {
-                return { labels: ['Hoka', 'Nike', 'ASICS', 'Brooks', 'On'], values: [35, 28, 18, 12, 7], title: 'Share of Voice: Running Shoe Brands' };
-            }
-            if (lowerCasePrompt.includes('smartphone') || lowerCasePrompt.includes('phone')) {
-                 return { labels: ['iPhone', 'Samsung Galaxy', 'Google Pixel', 'OnePlus'], values: [45, 30, 15, 10], title: 'Share of Voice: Smartphone Brands' };
-            }
-            if (lowerCasePrompt.includes('gaming console')) {
-                return { labels: ['PlayStation 5', 'Xbox Series X', 'Nintendo Switch'], values: [48, 32, 20], title: 'Share of Voice: Gaming Consoles' };
-            }
-            return null;
-        };
+    const summaryCard = document.getElementById('summary-card');
+    const summaryResponseEl = document.getElementById('summary-response');
 
-        const renderSOVChart = (data) => {
-            if (sovChart) sovChart.destroy();
-            sovSection.style.display = 'block';
-            sovTitle.textContent = data.title;
-            const ctx = sovCanvas.getContext('2d');
+    const sovCard = document.getElementById('sov-card');
+    const sovChartEl = document.getElementById('sov-chart');
+    let sovChart = null;
+
+    // --- MOCK SOV DATA ---
+    const sovData = {
+        "running shoes": {
+            labels: ["Hoka", "Nike", "ASICS", "On Running", "New Balance"],
+            data: [35, 25, 18, 15, 7]
+        },
+        "smartphones": {
+            labels: ["Apple iPhone", "Samsung Galaxy", "Google Pixel", "OnePlus"],
+            data: [55, 28, 12, 5]
+        },
+        "gaming consoles": {
+            labels: ["PlayStation 5", "Nintendo Switch", "Xbox Series X"],
+            data: [45, 35, 20]
+        }
+    };
+    
+    // --- EVENT LISTENERS ---
+    generateBtn.addEventListener('click', handleGeneration);
+
+    // --- FUNCTIONS ---
+    async function handleGeneration() {
+        const prompt = promptInput.value.trim();
+        if (!prompt) {
+            alert('Please enter a prompt.');
+            return;
+        }
+
+        setLoadingState(true);
+
+        try {
+            const [llmRes, summaryRes] = await Promise.all([
+                fetch('/.netlify/functions/get-llm-response', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt })
+                }).then(res => res.json()),
+                
+                fetch('/.netlify/functions/get-insights-summary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt })
+                }).then(res => res.json())
+            ]);
+
+            updateLLMResponses(llmRes);
+            updateSummaryResponse(summaryRes);
+            updateSOVChart(prompt);
+
+            geminiCard.classList.remove('hidden');
+            chatgptCard.classList.remove('hidden');
+            insightsSection.classList.remove('hidden');
+
+        } catch (error) {
+            console.error('Error fetching responses:', error);
+            geminiResponseEl.innerHTML = `<p class="text-red-400">Error fetching Gemini response.</p>`;
+            chatgptResponseEl.innerHTML = `<p class="text-red-400">Error fetching ChatGPT response.</p>`;
+            summaryResponseEl.innerHTML = `<p class="text-red-400">Error fetching insights summary.</p>`;
+        } finally {
+            setLoadingState(false);
+        }
+    }
+
+    function updateLLMResponses(data) {
+        geminiResponseEl.innerHTML = data.gemini || `<p>No response from Gemini.</p>`;
+        chatgptResponseEl.innerHTML = data.chatgpt || `<p>No response from ChatGPT.</p>`;
+    }
+
+    function updateSummaryResponse(data) {
+        summaryResponseEl.innerHTML = data.summary || `<p>Could not generate summary.</p>`;
+    }
+
+    function updateSOVChart(prompt) {
+        const lowerCasePrompt = prompt.toLowerCase();
+        let chartData = null;
+
+        for (const key in sovData) {
+            if (lowerCasePrompt.includes(key)) {
+                chartData = sovData[key];
+                break;
+            }
+        }
+
+        if (sovChart) {
+            sovChart.destroy();
+        }
+
+        if (chartData) {
+            sovCard.classList.remove('hidden');
+            const ctx = sovChartEl.getContext('2d');
             sovChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: data.labels,
+                    labels: chartData.labels,
                     datasets: [{
                         label: 'Share of Voice',
-                        data: data.values,
-                        backgroundColor: ['rgba(59, 130, 246, 0.7)', 'rgba(16, 185, 129, 0.7)', 'rgba(239, 68, 68, 0.7)', 'rgba(245, 158, 11, 0.7)', 'rgba(139, 92, 246, 0.7)'],
-                        borderColor: '#4b5563',
+                        data: chartData.data,
+                        backgroundColor: [
+                            'rgba(96, 165, 250, 0.7)',
+                            'rgba(52, 211, 153, 0.7)',
+                            'rgba(192, 132, 252, 0.7)',
+                            'rgba(251, 146, 60, 0.7)',
+                            'rgba(248, 113, 113, 0.7)'
+                        ],
+                        borderColor: '#1F2937',
                         borderWidth: 2
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#d1d5db', font: { size: 14 } } } } }
-            });
-        };
-
-        const getLLMExampleText = (prompt, persona) => {
-            const lowerCasePrompt = prompt.toLowerCase();
-            let topic = 'generic';
-            if (lowerCasePrompt.includes('running shoes')) topic = 'shoes';
-            if (lowerCasePrompt.includes('smartphone')) topic = 'smartphones';
-            if (lowerCasePrompt.includes('gaming console')) topic = 'consoles';
-
-            const responses = {
-                shoes: {
-                    gemini: "When choosing running shoes, consider:\n\n**1. Foot Type:** Neutral, overpronation, or supination.\n**2. Running Surface:** Road, trail, or track.\n**3. Cushioning Level:** From minimalist to maximalist.\n\nLeading brands like Hoka and Nike offer varied models for different needs.",
-                    chatgpt: "Hey! Picking running shoes is super personal, but here are some popular choices people love:\n\n* **For Cushion:** Hoka Clifton is often a top pick.\n* **For Speed:** Nike Vaporfly is famous for racing.\n* **For Trails:** Brooks Cascadia is a reliable workhorse.",
-                    llama: "The optimal running shoe is contingent on biomechanics and intended use. Key factors include pronation control, stack height, and outsole design. Brands such as ASICS and Brooks are noted for their stability models, while Nike and Hoka are prominent in the maximalist and performance categories."
-                },
-                smartphones: {
-                    gemini: "Key factors in selecting a smartphone:\n\n**1. Operating System:** iOS (Apple) or Android (Google, Samsung).\n**2. Camera Quality:** Compare lens specifications and software processing.\n**3. Battery Life:** Look at mAh capacity and optimization.\n\nThe iPhone and Samsung Galaxy series represent the market leaders.",
-                    chatgpt: "Hey! So you're looking for a new phone? Awesome! Here's a quick guide:\n\n* **Team iPhone:** If you love a simple interface and a great ecosystem, the iPhone is for you.\n* **Team Android:** For more customization, check out the Samsung Galaxy (great all-rounder) or Google Pixel (amazing camera).",
-                    llama: "Smartphone selection is primarily dictated by ecosystem preference (iOS vs. Android), camera system performance, and processor efficiency. Apple's iPhone series is known for its integrated hardware/software experience. In the Android space, Samsung's Galaxy line offers premium features, while Google's Pixel devices are lauded for computational photography."
-                },
-                 consoles: {
-                    gemini: "Choosing a gaming console depends on your priorities:\n\n**1. Exclusive Games:** PlayStation is known for single-player exclusives (e.g., God of War), while Nintendo has iconic family-friendly franchises (e.g., Mario, Zelda).\n**2. Online Services:** Xbox Game Pass is widely considered the best value in gaming, offering a huge library of titles.\n**3. Portability:** The Nintendo Switch is unique in its ability to be both a home console and a handheld device.",
-                    chatgpt: "Picking a console is a big decision! Here's the lowdown:\n\n* **PlayStation 5:** Get this for incredible exclusive games and cutting-edge graphics.\n* **Xbox Series X:** The best choice if you want the 'Netflix of gaming' with Game Pass. So many games!\n* **Nintendo Switch:** Perfect for gaming on the go and amazing for fun with friends and family.",
-                    llama: "The primary differentiators in the current console market are software exclusives and service offerings. Sony's PlayStation 5 leads with critically-acclaimed first-party narrative titles. Microsoft's Xbox Series X is defined by its Game Pass subscription service. Nintendo's Switch dominates the hybrid console space with a strong library of exclusive intellectual property."
-                },
-                generic: {
-                    gemini: `This is a simulated Gemini response for: "${prompt}". I would provide a structured, multi-faceted answer here.`,
-                    chatgpt: `This is a simulated ChatGPT response for: "${prompt}". I'd offer a friendly, conversational, and list-based answer.`,
-                    llama: `This is a simulated Llama response for: "${prompt}". My response would be concise, direct, and to the point.`
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#D1D5DB'
+                            }
+                        }
+                    }
                 }
-            };
-            return responses[topic][persona];
-        };
-
-        const generateLLMResponse = (prompt, persona) => {
-            const exampleText = getLLMExampleText(prompt, persona);
-            return new Promise(resolve => {
-                const delay = 1000 + Math.random() * 1500;
-                setTimeout(() => resolve(exampleText), delay);
             });
-        };
+        } else {
+            sovCard.classList.add('hidden');
+        }
+    }
+    
+    function setLoadingState(isLoading) {
+        if (isLoading) {
+            generateBtn.disabled = true;
+            generateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            buttonText.textContent = 'Generating...';
+            buttonIcon.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
+        } else {
+            generateBtn.disabled = false;
+            generateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            buttonText.textContent = 'Generate Insights';
+            buttonIcon.innerHTML = `<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`;
+        }
+    }
 
-        const handleSubmit = async () => {
-            const prompt = promptInput.value.trim();
-            if (!prompt) return;
+</script>
 
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Generating...';
-
-            geminiResponseEl.innerHTML = ''; chatgptResponseEl.innerHTML = ''; llamaResponseEl.innerHTML = '';
-            sovSection.style.display = 'none';
-
-            geminiResponseEl.appendChild(getLoader()); chatgptResponseEl.appendChild(getLoader()); llamaResponseEl.appendChild(getLoader());
-
-            const sovData = getSOVData(prompt);
-            if (sovData) renderSOVChart(sovData);
-
-            const [geminiRes, chatgptRes, llamaRes] = await Promise.all([
-                generateLLMResponse(prompt, 'gemini'),
-                generateLLMResponse(prompt, 'chatgpt'),
-                generateLLMResponse(prompt, 'llama')
-            ]);
-
-            geminiResponseEl.textContent = geminiRes;
-            chatgptResponseEl.textContent = chatgptRes;
-            llamaResponseEl.textContent = llamaRes;
-
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Generate Insights';
-        };
-
-        submitBtn.addEventListener('click', handleSubmit);
-        promptInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit();
-            }
-        });
-    </script>
 </body>
 </html>
 
