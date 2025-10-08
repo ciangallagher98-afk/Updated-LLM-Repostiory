@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini Arena: LLM Comparison</title>
+    <title>Gemini Arena: LLM Insights</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,7 +30,7 @@
     <div class="container mx-auto px-4 py-8 md:py-12">
         <header class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-white mb-2">Gemini Arena</h1>
-            <p class="text-lg text-gray-400 max-w-2xl mx-auto">Ask any product or brand question to compare LLM responses and see a dynamic Share of Voice (SOV) of the key players in the public conversation.</p>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">Ask any product or brand question to get an instant analysis and Share of Voice (SOV) powered by Gemini.</p>
         </header>
 
         <main>
@@ -44,30 +44,18 @@
                 </button>
             </div>
 
-            <div id="results-container" class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                <!-- LLM Responses will be injected here -->
-                <div id="llm-responses-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:col-span-2">
-                    <!-- Gemini Column -->
-                    <div id="gemini-card" class="bg-gray-800/50 border border-gray-700 rounded-lg p-6 relative response-card hidden">
-                        <div class="flex items-center mb-4">
-                             <svg class="w-6 h-6 mr-3 text-blue-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16zm-2.5-3.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm5 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
-                            <h3 class="text-xl font-semibold text-white">Gemini</h3>
-                        </div>
-                        <div id="gemini-response" class="text-gray-300 prose prose-invert max-w-none"><p>This is a simulated Gemini response. Enter a prompt to get a live answer.</p></div>
+            <div id="results-container" class="space-y-8">
+                <!-- Gemini Column -->
+                <div id="gemini-card" class="bg-gray-800/50 border border-gray-700 rounded-lg p-6 relative response-card hidden">
+                    <div class="flex items-center mb-4">
+                         <svg class="w-6 h-6 mr-3 text-blue-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16zm-2.5-3.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm5 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+                        <h3 class="text-xl font-semibold text-white">Gemini Response</h3>
                     </div>
-
-                    <!-- ChatGPT Column -->
-                    <div id="chatgpt-card" class="bg-gray-800/50 border border-gray-700 rounded-lg p-6 relative response-card hidden">
-                        <div class="flex items-center mb-4">
-                            <svg class="w-6 h-6 mr-3 text-green-400" viewBox="0 0 24 24" fill="currentColor"><path d="M20.29 3.71a9.99 9.99 0 00-14.14 0 9.99 9.99 0 000 14.14 9.99 9.99 0 0014.14 0 9.99 9.99 0 000-14.14zM12 20a8 8 0 110-16 8 8 0 010 16z"/><path d="M12 6a1 1 0 00-1 1v5a1 1 0 002 0V7a1 1 0 00-1-1zm0 8a1 1 0 100 2 1 1 0 000-2z"/></svg>
-                            <h3 class="text-xl font-semibold text-white">ChatGPT</h3>
-                        </div>
-                        <div id="chatgpt-response" class="text-gray-300 prose prose-invert max-w-none"><p>This is a simulated ChatGPT response. Enter a prompt to get a live answer.</p></div>
-                    </div>
+                    <div id="gemini-response" class="text-gray-300 prose prose-invert max-w-none"><p>Enter a prompt to get a live answer from Gemini.</p></div>
                 </div>
 
                 <!-- Insights Section -->
-                <div id="insights-section" class="lg:col-span-2 grid grid-cols-1 md:grid-cols-5 gap-8 hidden">
+                <div id="insights-section" class="grid grid-cols-1 md:grid-cols-5 gap-8 hidden">
                     <div id="sov-card" class="md:col-span-2 bg-gray-800/50 border border-gray-700 rounded-lg p-6 relative response-card">
                          <div class="flex items-center mb-4">
                             <svg class="w-6 h-6 mr-3 text-purple-400" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
@@ -80,7 +68,7 @@
                            <svg class="w-6 h-6 mr-3 text-yellow-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                             <h3 class="text-xl font-semibold text-white">Insights Summary</h3>
                         </div>
-                        <div id="summary-response" class="text-gray-300 prose prose-invert max-w-none"><p>An AI-generated summary of the key takeaways from the LLM responses will appear here.</p></div>
+                        <div id="summary-response" class="text-gray-300 prose prose-invert max-w-none"><p>An AI-generated summary of the key takeaways will appear here.</p></div>
                     </div>
                 </div>
             </div>
@@ -93,16 +81,11 @@
     const buttonText = document.getElementById('button-text');
     const buttonIcon = document.getElementById('button-icon');
     
-    const resultsContainer = document.getElementById('results-container');
     const insightsSection = document.getElementById('insights-section');
 
     const geminiCard = document.getElementById('gemini-card');
     const geminiResponseEl = document.getElementById('gemini-response');
     
-    const chatgptCard = document.getElementById('chatgpt-card');
-    const chatgptResponseEl = document.getElementById('chatgpt-response');
-
-    const summaryCard = document.getElementById('summary-card');
     const summaryResponseEl = document.getElementById('summary-response');
 
     const sovCard = document.getElementById('sov-card');
@@ -139,45 +122,29 @@
         setLoadingState(true);
 
         try {
-            const [llmRes, summaryRes] = await Promise.all([
-                fetch('/.netlify/functions/get-llm-response', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt })
-                }).then(res => res.json()),
-                
-                fetch('/.netlify/functions/get-insights-summary', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt })
-                }).then(res => res.json())
-            ]);
+            const insights = await fetch('/.netlify/functions/get-gemini-insights', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt })
+            }).then(res => res.json());
 
-            updateLLMResponses(llmRes);
-            updateSummaryResponse(summaryRes);
+            if (insights.error) {
+                throw new Error(insights.error);
+            }
+
+            geminiResponseEl.innerHTML = insights.geminiResponse || `<p>No response from Gemini.</p>`;
+            summaryResponseEl.innerHTML = insights.summary || `<p>Could not generate summary.</p>`;
             updateSOVChart(prompt);
 
             geminiCard.classList.remove('hidden');
-            chatgptCard.classList.remove('hidden');
             insightsSection.classList.remove('hidden');
 
         } catch (error) {
-            console.error('Error fetching responses:', error);
-            geminiResponseEl.innerHTML = `<p class="text-red-400">Error fetching Gemini response.</p>`;
-            chatgptResponseEl.innerHTML = `<p class="text-red-400">Error fetching ChatGPT response.</p>`;
-            summaryResponseEl.innerHTML = `<p class="text-red-400">Error fetching insights summary.</p>`;
+            console.error('Error fetching insights:', error);
+            geminiResponseEl.innerHTML = `<p class="text-red-400">Error fetching insights from Gemini. Please check the API key and function logs.</p>`;
         } finally {
             setLoadingState(false);
         }
-    }
-
-    function updateLLMResponses(data) {
-        geminiResponseEl.innerHTML = data.gemini || `<p>No response from Gemini.</p>`;
-        chatgptResponseEl.innerHTML = data.chatgpt || `<p>No response from ChatGPT.</p>`;
-    }
-
-    function updateSummaryResponse(data) {
-        summaryResponseEl.innerHTML = data.summary || `<p>Could not generate summary.</p>`;
     }
 
     function updateSOVChart(prompt) {
