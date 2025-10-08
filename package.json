@@ -1,0 +1,15 @@
+{
+  "name": "gemini-arena",
+  "version": "1.0.0",
+  "description": "A tool to compare LLM responses.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.7.1",
+    "openai": "^4.20.1"
+  }
+}
